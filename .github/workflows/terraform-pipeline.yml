@@ -153,7 +153,7 @@ jobs:
             github.rest.issues.deleteComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              comment_id: botComment.id,
+              comment_id: existingComment.id,
             });
           }
           github.rest.issues.createComment({
