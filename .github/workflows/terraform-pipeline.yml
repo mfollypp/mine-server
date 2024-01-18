@@ -49,7 +49,7 @@ jobs:
 
     - name: Terraform Validate
       id: validate
-      run: terraform validate
+      run: terraform validate -no-color
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
@@ -59,7 +59,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      run: terraform plan
+      run: terraform plan -no-color
 
     - name: Plan Summary
       id: plan_summary
