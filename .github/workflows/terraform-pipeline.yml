@@ -113,7 +113,7 @@ jobs:
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
-        github-token: ${{ secrets.GH_TOKEN }}
+        github-token: ${{ github.token }}
         script: |
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
