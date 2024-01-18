@@ -64,10 +64,10 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       run: terraform plan -no-color
 
-    - name: Infracost Actions
-      uses: infracost/actions@v2.1.0
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v2
       with:
-        api_key: ${{ secrets.INFRACOST_API_KEY }}
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
         path: ./terraform_main_resources
 
     - name: Plan Summary
