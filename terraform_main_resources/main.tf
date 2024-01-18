@@ -48,19 +48,24 @@ resource "azurerm_storage_account" "mine_server_storage" {
   account_replication_type = "GRS"
 }
 
+resource "azurerm_storage_share" "mine_file_share" {
+  name                 = "mineserver-file-share"
+  storage_account_name = azurerm_storage_account.mine_server_storage.name
+  quota                = 5
+}
+
 resource "azurerm_container_group" "mine_server" {
   name                = "mine-server"
   location            = data.azurerm_resource_group.mine_server_rg.location
   resource_group_name = data.azurerm_resource_group.mine_server_rg.name
   ip_address_type     = "Private"
   subnet_ids          = [azurerm_subnet.mine_server_subnet.id]
-  dns_name_label      = "platmine-server"
   os_type             = "Linux"
 
   container {
     name   = "platmine-container"
     image  = "itzg/minecraft-server:latest"
-    cpu    = "1"
+    cpu    = "2"
     memory = "4"
     volume {
       name                 = "platmine-volume"
