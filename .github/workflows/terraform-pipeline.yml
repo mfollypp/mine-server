@@ -67,18 +67,21 @@ jobs:
 
     # Setup Infracost
     - name: Setup Infracost
+      if: github.event_name == 'pull_request'
       uses: infracost/actions/setup@v2
       with:
         api-key: ${{ secrets.INFRACOST_API_KEY }}
 
     # Checkout the base branch so we can create a baseline.
     - name: Checkout base branch
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v3
       with:
         ref: '${{ github.event.pull_request.base.ref }}'
 
     # Generate Infracost JSON file as the baseline.
     - name: Generate Infracost cost estimate baseline
+      if: github.event_name == 'pull_request'
       run: |
         infracost breakdown --path=. \
                             --format=json \
@@ -86,10 +89,12 @@ jobs:
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
+      if: github.event_name == 'pull_request'
       uses: actions/checkout@v3
 
     # Generate an Infracost diff and save it to a JSON file.
     - name: Generate Infracost diff
+      if: github.event_name == 'pull_request'
       run: |
         infracost diff --path=. \
                         --format=json \
@@ -98,6 +103,7 @@ jobs:
 
     # Post Infracost comment
     - name: Post Infracost comment
+      if: github.event_name == 'pull_request'
       run: |
           infracost comment github --path=/tmp/infracost.json \
                                     --repo=$GITHUB_REPOSITORY \
