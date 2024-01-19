@@ -54,7 +54,7 @@ resource "azurerm_public_ip" "mine_lb_public_ip" {
   name                = "mine-lb-public-ip"
   resource_group_name = data.azurerm_resource_group.mine_server_rg.name
   allocation_method   = "Static"
-  location = data.azurerm_resource_group.mine_server_rg.location
+  location            = data.azurerm_resource_group.mine_server_rg.location
 }
 
 # resource "azurerm_lb" "mine_lb" {
