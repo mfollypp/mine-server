@@ -23,10 +23,12 @@ resource "azurerm_container_group" "mine_server" {
   dns_name_label_reuse_policy = "Noreuse"
 
   container {
-    name   = "mine-container"
-    image  = "itzg/minecraft-server:latest"
-    cpu    = "4"
-    memory = "8"
+    name                  = "mine-container"
+    image                 = "itzg/minecraft-server:latest"
+    cpu                   = "4"
+    memory                = "8"
+    environment_variables = { "EULA" = "true" }
+
     volume {
       name                 = "mine-volume"
       mount_path           = "/data"
@@ -37,12 +39,12 @@ resource "azurerm_container_group" "mine_server" {
     }
 
     ports {
-      port     = 443
+      port     = 25565
       protocol = "TCP"
     }
 
     ports {
-      port     = 25565
+      port     = 25575
       protocol = "TCP"
     }
   }
