@@ -49,6 +49,7 @@ jobs:
       id: fmt
       run: terraform fmt -check
 
+    # Checks whether the configuration is valid and internally consistent
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
@@ -64,6 +65,47 @@ jobs:
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       run: terraform plan -no-color
 
+    # Setup Infracost
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v2
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+    # Checkout the base branch so we can create a baseline.
+    - name: Checkout base branch
+      uses: actions/checkout@v3
+      with:
+        ref: '${{ github.event.pull_request.base.ref }}'
+
+    # Generate Infracost JSON file as the baseline.
+    - name: Generate Infracost cost estimate baseline
+      run: |
+        infracost breakdown --path=. \
+                            --format=json \
+                            --out-file=/tmp/infracost-base.json
+
+    # Checkout the current PR branch so we can create a diff.
+    - name: Checkout PR branch
+      uses: actions/checkout@v3
+
+    # Generate an Infracost diff and save it to a JSON file.
+    - name: Generate Infracost diff
+      run: |
+        infracost diff --path=. \
+                        --format=json \
+                        --compare-to=/tmp/infracost-base.json \
+                        --out-file=/tmp/infracost.json
+
+    # Post Infracost comment
+    - name: Post Infracost comment
+      run: |
+          infracost comment github --path=/tmp/infracost.json \
+                                    --repo=$GITHUB_REPOSITORY \
+                                    --github-token=${{github.token}} \
+                                    --pull-request=${{github.event.pull_request.number}} \
+                                    --behavior=update
+
+    # Post Terraform plan summary as a comment on the pull request
     - name: Plan Summary
       id: plan_summary
       uses: actions/github-script@v6
@@ -71,8 +113,17 @@ jobs:
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
-        github-token: ${{ secrets.GH_TOKEN }}
+        github-token: ${{ github.token }}
         script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          const botComment = comments.find(comment => {
+            return comment.user.type === 'bot' && comment.body.includes('Terraform Format')
+          });
+
           const output = `
           #### Terraform Format 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
@@ -98,15 +149,24 @@ jobs:
 
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+          }
 
-      # On push to "master", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    # On push to "master", build or change infrastructure according to Terraform configuration files
+    # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
