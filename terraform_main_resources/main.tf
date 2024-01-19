@@ -27,11 +27,11 @@ resource "azurerm_container_group" "mine_server" {
   name                        = "mine-server"
   location                    = data.azurerm_resource_group.mine_server_rg.location
   resource_group_name         = data.azurerm_resource_group.mine_server_rg.name
-  ip_address_type             = "Private"
-  subnet_ids                  = [azurerm_subnet.mine_server_subnet.id]
+  ip_address_type             = "Public"
   os_type                     = "Linux"
   dns_name_label              = "folly-mine-server"
   dns_name_label_reuse_policy = "Noreuse"
+  #subnet_ids                  = [azurerm_subnet.mine_server_subnet.id]
 
   container {
     name   = "mine-container"
