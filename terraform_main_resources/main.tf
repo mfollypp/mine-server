@@ -12,62 +12,66 @@ data "azurerm_resource_group" "mine_server_rg" {
   name = "mine-server-rg"
 }
 
-resource "azurerm_storage_account" "mine_server_storage" {
-  name                     = "mineserverdatastorage"
-  resource_group_name      = data.azurerm_resource_group.mine_server_rg.name
-  location                 = data.azurerm_resource_group.mine_server_rg.location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
+data "azurerm_storage_account" "mine_server_storage" {
+  name                = "mineserversa"
+  resource_group_name = data.azurerm_resource_group.mine_server_rg.name
 }
 
 resource "azurerm_storage_share" "mine_file_share" {
   name                 = "mineserverfileshare"
-  storage_account_name = azurerm_storage_account.mine_server_storage.name
-  quota                = 5
+  storage_account_name = data.azurerm_storage_account.mine_server_storage.name
+  quota                = 5 #GB
 }
 
 resource "azurerm_container_group" "mine_server" {
-  name                = "mine-server"
-  location            = data.azurerm_resource_group.mine_server_rg.location
-  resource_group_name = data.azurerm_resource_group.mine_server_rg.name
-  ip_address_type     = "Private"
-  subnet_ids          = [azurerm_subnet.mine_server_subnet.id]
-  os_type             = "Linux"
+  name                        = "mine-server"
+  location                    = data.azurerm_resource_group.mine_server_rg.location
+  resource_group_name         = data.azurerm_resource_group.mine_server_rg.name
+  ip_address_type             = "Private"
+  subnet_ids                  = [azurerm_subnet.mine_server_subnet.id]
+  os_type                     = "Linux"
+  dns_name_label              = "folly-mine-server"
+  dns_name_label_reuse_policy = "Noreuse"
 
   container {
-    name   = "platmine-container"
+    name   = "mine-container"
     image  = "itzg/minecraft-server:latest"
-    cpu    = "2"
-    memory = "4"
+    cpu    = "4"
+    memory = "8"
     volume {
-      name                 = "platmine-volume"
+      name                 = "mine-volume"
       mount_path           = "/data"
       read_only            = false
       share_name           = azurerm_storage_share.mine_file_share.name
-      storage_account_name = azurerm_storage_account.mine_server_storage.name
-      storage_account_key  = azurerm_storage_account.mine_server_storage.primary_access_key
+      storage_account_name = data.azurerm_storage_account.mine_server_storage.name
+      storage_account_key  = data.azurerm_storage_account.mine_server_storage.primary_access_key
     }
 
     ports {
       port     = 443
       protocol = "TCP"
     }
+
+    ports {
+      port     = 25565
+      protocol = "TCP"
+    }
   }
 }
 
-resource "azurerm_virtual_network" "mine_server_vnet" {
-  name                = "mineserver-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = data.azurerm_resource_group.mine_server_rg.location
-  resource_group_name = data.azurerm_resource_group.mine_server_rg.name
-}
+# resource "azurerm_virtual_network" "mine_server_vnet" {
+#   name                = "mineserver-vnet"
+#   address_space       = ["10.0.0.0/16"]
+#   location            = data.azurerm_resource_group.mine_server_rg.location
+#   resource_group_name = data.azurerm_resource_group.mine_server_rg.name
+# }
 
-resource "azurerm_subnet" "mine_server_subnet" {
-  name                 = "mineserver-subnet"
-  resource_group_name  = data.azurerm_resource_group.mine_server_rg.name
-  virtual_network_name = azurerm_virtual_network.mine_server_vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
+# resource "azurerm_subnet" "mine_server_subnet" {
+#   name                 = "mineserver-subnet"
+#   resource_group_name  = data.azurerm_resource_group.mine_server_rg.name
+#   virtual_network_name = azurerm_virtual_network.mine_server_vnet.name
+#   address_prefixes     = ["10.0.1.0/24"]
+# }
 
 # resource "azurerm_subnet" "gateway_subnet" {
 #   name                 = "mineserver-gateway-subnet"

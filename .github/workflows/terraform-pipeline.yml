@@ -120,8 +120,8 @@ jobs:
             repo: context.repo.repo,
             issue_number: context.issue.number,
           });
-          const existingComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format')
+          const botComment = comments.find(comment => {
+            return comment.user.type === 'bot' && comment.body.includes('Terraform Format')
           });
 
           const output = `
@@ -149,19 +149,21 @@ jobs:
 
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
-          if (existingComment) {
-            github.rest.issues.deleteComment({
+          if (botComment) {
+            github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              comment_id: existingComment.id,
-            });
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
           }
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          });
 
     # On push to "master", build or change infrastructure according to Terraform configuration files
     # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
