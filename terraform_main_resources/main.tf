@@ -24,9 +24,9 @@ resource "azurerm_container_group" "mine_server" {
   container {
     name                  = "mine-container"
     image                 = "itzg/minecraft-server:latest"
-    cpu                   = "3"
-    memory                = "6"
-    environment_variables = { "EULA" = "true" }
+    cpu                   = "1"
+    memory                = "4"
+    environment_variables = { "EULA" = "true", "OPS" = "GR8B8_" }
 
     volume {
       name                 = "mine-volume"
@@ -44,6 +44,11 @@ resource "azurerm_container_group" "mine_server" {
 
     ports {
       port     = 25575
+      protocol = "TCP"
+    }
+
+    ports {
+      port     = 445
       protocol = "TCP"
     }
   }
