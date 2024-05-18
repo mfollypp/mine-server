@@ -29,10 +29,13 @@ resource "azurerm_container_group" "mine_server" {
     environment_variables = {
       "EULA"              = "true",
       "VERSION"           = "1.20.1",
+      "TYPE"              = "FABRIC",
       "MODRINTH_LOADER"   = "fabric",
+      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap",
       "OPS"               = "GR8B8_",
       "MOTD"              = "Servidor Cobblemon dos casas",
-      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap"
+      "MAX_PLAYERS"       = "8",
+      "PVP"               = "false"
     }
 
     volume {
