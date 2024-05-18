@@ -33,7 +33,7 @@ resource "azurerm_container_group" "mine_server" {
       "MODRINTH_LOADER"   = "fabric",
       "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap",
       "OPS"               = "GR8B8_",
-      "MOTD"              = "Servidor Cobblemon dos casas",
+      "MOTD"              = "Servidor \u00A72Cobblemon \u00A7fdos casas",
       "MAX_PLAYERS"       = "8",
       "PVP"               = "false"
     }
