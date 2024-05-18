@@ -27,15 +27,17 @@ resource "azurerm_container_group" "mine_server" {
     cpu    = "1"
     memory = "4"
     environment_variables = {
-      "EULA"              = "true",
-      "VERSION"           = "1.20.1",
-      "TYPE"              = "FABRIC",
-      "MODRINTH_LOADER"   = "fabric",
-      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap",
-      "OPS"               = "GR8B8_",
-      "MOTD"              = "Servidor \u00A72Cobblemon \u00A7fdos casas",
-      "MAX_PLAYERS"       = "8",
-      "PVP"               = "false"
+      "EULA"             = "true",
+      "VERSION"          = "1.20.1",
+      "TYPE"             = "FABRIC",
+      "MOD_PLATFORM"     = "MODRINTH",
+      "MODRINTH_MODPACK" = "https://modrinth.com/modpack/cobblemon-fabric/version/1.5",
+      #"MODRINTH_LOADER"   = "fabric",
+      #"MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap",
+      "OPS"         = "GR8B8_",
+      "MOTD"        = "Servidor \u00A72Cobblemon \u00A7fdos casas",
+      "MAX_PLAYERS" = "8",
+      "PVP"         = "false"
     }
 
     volume {
