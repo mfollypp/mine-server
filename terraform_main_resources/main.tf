@@ -32,7 +32,7 @@ resource "azurerm_container_group" "mine_server" {
       "MODRINTH_LOADER"   = "fabric",
       "OPS"               = "GR8B8_",
       "MOTD"              = "Servidor Cobblemon dos casas",
-      "MODRINTH_PROJECTS" = ["fabric-api", "cobblemon", "journeymap"]
+      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap"
     }
 
     volume {
