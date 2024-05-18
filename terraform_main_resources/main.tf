@@ -23,10 +23,17 @@ resource "azurerm_container_group" "mine_server" {
 
   container {
     name                  = "mine-container"
-    image                 = "itzg/minecraft-server:latest"
+    image                 = "itzg/minecraft-server"
     cpu                   = "1"
     memory                = "4"
-    environment_variables = { "EULA" = "true", "OPS" = "GR8B8_" }
+    environment_variables = { 
+      "EULA" = "true",
+      "VERSION" = "1.20.1",
+      "MODRINTH_LOADER" = "fabric",
+      "OPS" = "GR8B8_",
+      "MOTD" = "Servidor Cobblemon dos casas",
+      "MODRINTH_PROJECTS" = ["fabric-api", "cobblemon", "journeymap"]
+    }
 
     volume {
       name                 = "mine-volume"
