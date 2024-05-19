@@ -63,7 +63,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      run: terraform plan -no-color -replace="azurerm_storage_share.mine_file_share" -replace="azurerm_container_group.mine_server"
+      run: terraform plan -no-color
 
     # Setup Infracost
     - name: Setup Infracost
@@ -180,4 +180,4 @@ jobs:
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-      run: terraform apply -auto-approve -replace="azurerm_storage_share.mine_file_share" -replace="azurerm_container_group.mine_server"
+      run: terraform apply -auto-approve
