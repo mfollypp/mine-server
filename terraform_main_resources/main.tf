@@ -32,7 +32,7 @@ resource "azurerm_container_group" "mine_server" {
       "VERSION"           = "1.20.1",
       "TYPE"              = "FABRIC",
       "MODRINTH_LOADER"   = "fabric",
-      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,journeymap,appleskin,dismount-entity,ferrite-core,krypton,lazydfu,lmd,lithium,memoryleakfix,starlight,yosbr,architectury-api,bookshelf-lib,cloth-config,collective,konkrete",
+      "MODRINTH_PROJECTS" = "fabric-api,cobblemon,appleskin,dismount-entity,ferrite-core,krypton,lazydfu,lmd,lithium,memoryleakfix,starlight,yosbr,architectury-api,bookshelf-lib,cloth-config,collective,konkrete",
       "OPS"               = "GR8B8_",
       "MOTD"              = "Servidor \u00A72Cobblemon \u00A7fdos casas",
       "MAX_PLAYERS"       = "8",
