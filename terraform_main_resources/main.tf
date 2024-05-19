@@ -18,7 +18,7 @@ resource "azurerm_container_group" "mine_server" {
   location            = data.azurerm_resource_group.mine_server_rg.location
   resource_group_name = data.azurerm_resource_group.mine_server_rg.name
   ip_address_type     = "None" #"Public"
-  priority            = "spot"
+  priority            = "Spot"
   os_type             = "Linux"
   dns_name_label      = "folly-mine-server"
 
